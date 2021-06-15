@@ -21,30 +21,36 @@ public class Client {
         this.view = new MenuController();
         enterNumberOfPeople(file);
         view.run(new Menu.Builder().setScanner(scanner)
-                .addItem(1, "Find a person",this::searchQueries)
+                .addItem(1, "Find a person", this::searchQueries)
                 .addItem(2, "Print all people", this::printAllPeople)
                 .addItem(0, "Exit", this::exit)
                 .build());
+
     }
 
     private void enterNumberOfPeople(String file) throws FileNotFoundException {
-        File file2 = new File(file);
-        Scanner scanner = new Scanner(file2);
-        while (scanner.hasNext()) {
-            String[] s = scanner.nextLine().split(" ");
-            if (s.length > 3) {
-                break;
-            }
-            if (s.length == 3) {
-                peopleA.add(new Person(s[0], s[1], s[2]));
-            } else {
-                if (s.length < 2) {
+        Scanner scanner2 = null;
+        try {
+             scanner2 = new Scanner(new File(file));
+            while (scanner2.hasNext()) {
+                String[] s = scanner2.nextLine().split(" ");
+                if (s.length > 3) {
                     break;
                 }
-                peopleA.add(new Person(s[0], s[1]));
+                if (s.length == 3) {
+                    peopleA.add(new Person(s[0], s[1], s[2]));
+                } else {
+                    if (s.length < 2) {
+                        break;
+                    }
+                    peopleA.add(new Person(s[0], s[1]));
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            scanner2.close();
         }
-
 //        FileReader fileReader = new FileReader("F:\\Simple Search Engine\\ok.txt");
 //        System.out.println(new BufferedReader(new FileReader(file)));
 //        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -86,7 +92,7 @@ public class Client {
 //        }
     }
 
-    private void printAllPeople(){
+    private void printAllPeople() {
         System.out.println("=== List of people ===");
         for (Person person : peopleA) {
             System.out.println(person.toString());
@@ -117,7 +123,7 @@ public class Client {
         }
     }
 
-    private void exit(){
+    private void exit() {
         view.exitMenu();
     }
 }

@@ -70,6 +70,10 @@ public class Menu {
         }
     }
 
+    public Scanner getScanner() {
+        return scanner;
+    }
+
     /**
      * Static class provides a row linked with text and special action
      */
