@@ -4,7 +4,9 @@ import search.model.Person;
 import search.view.Menu;
 import search.view.MenuController;
 
+import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Client {
     private final Scanner scanner;
@@ -14,10 +16,10 @@ public class Client {
     private String ok = "";
     private int amountOfSearchQueries;
 
-    public Client() {
+    public Client(String file) throws FileNotFoundException {
         this.scanner = new Scanner(System.in);
         this.view = new MenuController();
-        enterNumberOfPeople();
+        enterNumberOfPeople(file);
         view.run(new Menu.Builder().setScanner(scanner)
                 .addItem(1, "Find a person",this::searchQueries)
                 .addItem(2, "Print all people", this::printAllPeople)
@@ -25,12 +27,10 @@ public class Client {
                 .build());
     }
 
-    private void enterNumberOfPeople() {
-        System.out.println("Enter the number of people:");
-        amountOfLoops = scanner.nextInt();
-        System.out.println("Enter all people:");
-        scanner.nextLine();
-        for (int i = 0; i < amountOfLoops; i++) {
+    private void enterNumberOfPeople(String file) throws FileNotFoundException {
+        File file2 = new File(file);
+        Scanner scanner = new Scanner(file2);
+        while (scanner.hasNext()) {
             String[] s = scanner.nextLine().split(" ");
             if (s.length > 3) {
                 break;
@@ -44,6 +44,38 @@ public class Client {
                 peopleA.add(new Person(s[0], s[1]));
             }
         }
+
+//        FileReader fileReader = new FileReader("F:\\Simple Search Engine\\ok.txt");
+//        System.out.println(new BufferedReader(new FileReader(file)));
+//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+//            reader.readLine();
+////            file.
+////            return reader.lines().map(Person::parsePerson).collect(Collectors.toList());
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println(file);
+////        System.out.println("Enter the number of people:");
+////        amountOfLoops = scanner.nextInt();
+////        System.out.println("Enter all people:");
+////        scanner.nextLine();
+//        for (int i = 0; i < amountOfLoops; i++) {
+//            String[] s = scanner.nextLine().split(" ");
+//            if (s.length > 3) {
+//                break;
+//            }
+//            if (s.length == 3) {
+//                peopleA.add(new Person(s[0], s[1], s[2]));
+//            } else {
+//                if (s.length < 2) {
+//                    break;
+//                }
+//                peopleA.add(new Person(s[0], s[1]));
+//            }
+//        }
 //        System.out.println("Enter the number of search queries:");
 //        amountOfSearchQueries = scanner.nextInt();
 //
