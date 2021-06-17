@@ -6,7 +6,6 @@ import search.view.MenuController;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Client {
     private final Scanner scanner;
@@ -23,8 +22,8 @@ public class Client {
                 .addItem(2, "Print all people", this::printAllPeople)
                 .addItem(0, "Exit", this::exit)
                 .build());
-
     }
+
 
     private void enterNumberOfPeople(String file) throws FileNotFoundException {
         Scanner scanner2 = null;
@@ -59,45 +58,7 @@ public class Client {
             scanner2.close();
         }
 
-//        FileReader fileReader = new FileReader("F:\\Simple Search Engine\\ok.txt");
-//        System.out.println(new BufferedReader(new FileReader(file)));
-//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-//            reader.readLine();
-////            file.
-////            return reader.lines().map(Person::parsePerson).collect(Collectors.toList());
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        System.out.println(file);
-////        System.out.println("Enter the number of people:");
-////        amountOfLoops = scanner.nextInt();
-////        System.out.println("Enter all people:");
-////        scanner.nextLine();
-//        for (int i = 0; i < amountOfLoops; i++) {
-//            String[] s = scanner.nextLine().split(" ");
-//            if (s.length > 3) {
-//                break;
-//            }
-//            if (s.length == 3) {
-//                peopleA.add(new Person(s[0], s[1], s[2]));
-//            } else {
-//                if (s.length < 2) {
-//                    break;
-//                }
-//                peopleA.add(new Person(s[0], s[1]));
-//            }
-//        }
-//        System.out.println("Enter the number of search queries:");
-//        amountOfSearchQueries = scanner.nextInt();
-//
-//        scanner.nextLine();
-//        for (int i = 0; i < amountOfSearchQueries; i++) {
-//            System.out.println("Enter data to search people:");
-//            searchQueries();
-//        }
+
     }
 
 
@@ -125,30 +86,133 @@ public class Client {
     private void searchQueries() {
         System.out.println("Enter a name or email to search all suitable people.");
         String searchQuery = scanner.nextLine();
-        LinkedHashSet<Person> peopleB = new LinkedHashSet<>();
+        System.out.println("Select a matching strategy: ALL, ANY, NONE");
+        String strategy = scanner.nextLine();
         searchQuery = searchQuery.toUpperCase().trim();
-        if (map.get(searchQuery)==null) {
-            System.out.println("No matching people found.");
-        }else {
-            String finalSearchQuery = searchQuery;
-            map.get(searchQuery).forEach(p -> {
-                Person person = peopleA.get(p);
-                if (person.getEmail() != null) {
-                    if (person.getEmail().trim().toUpperCase().contains(finalSearchQuery)) {
-                        peopleB.add(person);
-                    }
-                }
-                if (person.getSurName().trim().toUpperCase().contains(finalSearchQuery)) {
-                    peopleB.add(person);
-                }
-                if (person.getUserName().trim().toUpperCase().contains(finalSearchQuery)) {
-                    peopleB.add(person);
-                }
-            });
+        LinkedHashSet<Person> peopleB = null;
+        switch (strategy) {
+            case "ANY":
+                peopleB = any(searchQuery);
+                break;
+            case "ALL":
+                peopleB = all(searchQuery);
+                break;
+            case "NONE":
+                peopleB = none(searchQuery);
+                break;
+            default:
+                System.out.println("\nIncorrect option! Try again.");
+                break;
+        }
+        if (peopleB == null) {
+            System.out.println("\nNo matching people found.");
+            return;
+        } else if (map.isEmpty()) {
+            System.out.println("\nNo matching people found.");
+            return;
+        } else {
             for (Person person : peopleB) {
                 System.out.println(person.toString());
             }
         }
+
+
+//        if (finder == null) {
+//            throw new RuntimeException(
+//                    "Unknown strategy type passed. Please, write to the author of the problem.");
+//        }
+//
+//        System.out.println(finder.find(numbers));
+
+//        if (map.get(searchQuery)==null) {
+//            System.out.println("No matching people found.");
+//        }else {
+//            String finalSearchQuery = searchQuery;
+//            map.get(searchQuery).forEach(p -> {
+//                Person person = peopleA.get(p);
+//                if (person.getEmail() != null) {
+//                    if (person.getEmail().trim().toUpperCase().contains(finalSearchQuery)) {
+//                        peopleB.add(person);
+//                    }
+//                }
+//                if (person.getSurName().trim().toUpperCase().contains(finalSearchQuery)) {
+//                    peopleB.add(person);
+//                }
+//                if (person.getUserName().trim().toUpperCase().contains(finalSearchQuery)) {
+//                    peopleB.add(person);
+//                }
+//            });
+//            for (Person person : peopleB) {
+//                System.out.println(person.toString());
+//            }
+//        }
+    }
+
+    public LinkedHashSet<Person> none(String searchQuery) {
+        LinkedHashSet<Person> peopleB = new LinkedHashSet<>();
+        map.get(searchQuery).forEach(p->{
+            Person person = peopleA.get(p);
+            if (!person.toString().contains(searchQuery)) {
+                peopleB.add(person);
+            }
+        });
+        return peopleB;
+    }
+
+    public LinkedHashSet<Person> all(String searchQuery) {
+        LinkedHashSet<Person> peopleB = new LinkedHashSet<>();
+
+        map.get(searchQuery).forEach(p->{
+            Person person = peopleA.get(p);
+            if (person.toString().contains(searchQuery)) {
+                peopleB.add(person);
+            }
+        });
+        return peopleB;
+    }
+
+    public LinkedHashSet<Person> any(String search) {
+        LinkedHashSet<Person> peopleB = new LinkedHashSet<>();
+        String[] s = search.split(" ");
+        for (int i = 0; i < s.length; i++) {
+            int finalI = i;
+            if (map.get(s[i])!=null) {
+                map.get(s[i]).forEach(p -> {
+                    Person person = peopleA.get(p);
+                    if (person.getEmail() != null) {
+                        if (person.getEmail().trim().toUpperCase().contains(s[finalI])) {
+                            peopleB.add(person);
+                        }
+                    }
+                    if (person.getSurName().trim().toUpperCase().contains(s[finalI])) {
+                        peopleB.add(person);
+                    }
+                    if (person.getUserName().trim().toUpperCase().contains(s[finalI])) {
+                        peopleB.add(person);
+                    }
+                });
+            }
+        }
+//        Arrays.stream(s).map(p ->{
+//            System.out.println(p);
+//            return null;
+//        });
+//
+//        map.get(search).forEach(p -> {
+//            Person person = peopleA.get(p);
+//            if (person.getEmail() != null) {
+//                if (person.getEmail().trim().toUpperCase().contains(search)) {
+//                    peopleB.add(person);
+//                }
+//            }
+//            if (person.getSurName().trim().toUpperCase().contains(search)) {
+//                peopleB.add(person);
+//            }
+//            if (person.getUserName().trim().toUpperCase().contains(search)) {
+//                peopleB.add(person);
+//            }
+//        });
+        return peopleB;
     }
 
     private void exit() {
