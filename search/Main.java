@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
+
         new Client(args[Arrays.asList(args).indexOf("--data") + 1]);
     }
 }

@@ -6,6 +6,8 @@ public class Person {
     private String surName;
     private String email;
 
+
+
     public Person(String userName, String surName, String email) {
         this.userName = userName;
         this.surName = surName;
@@ -16,6 +18,9 @@ public class Person {
     public Person(String userName, String surName) {
         this.userName = userName;
         this.surName = surName;
+    }
+
+    public Person(Person person) {
     }
 
     public String getUserName() {
@@ -45,9 +50,9 @@ public class Person {
     @Override
     public String toString() {
         if (getEmail()!=null){
-            return  userName + " " + surName + " " +email.trim();
+            return  userName.trim() + " " + surName.trim()  + " " +email.trim();
         }else{
-            return  userName + " " + surName.trim();
+            return  userName.trim() + " " + surName.trim();
         }
     }
 
